@@ -1,0 +1,5 @@
+arm-none-eabi-gcc -c -mcpu=cortex-m3 -mthumb -std=gnu11 -Wall -o main.o main.c
+arm-none-eabi-gcc -c -mcpu=cortex-m3 -mthumb -std=gnu11 -Wall -o stm32_startup.o stm32_startup.c
+arm-none-eabi-gcc -c -mcpu=cortex-m3 -mthumb -std=gnu11 -Wall -o system_stm32f10x.o system_stm32f10x.c
+arm-none-eabi-gcc -T stm32_linker.ld -nostdlib -Wl,-Map=blinky.map -o blinky.elf main.o stm32_startup.o
+arm-none-eabi-objcopy -O binary blinky.elf blinky.bin
