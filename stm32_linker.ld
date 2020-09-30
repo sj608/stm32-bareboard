@@ -20,7 +20,7 @@ SECTIONS
     /*unitialized data*/
     .data :
     {
-        start_of_data = 0x20000000; 
+        start_of_data = .; 
         *(.data)
         . = ALIGN(4);
         end_of_data = .;

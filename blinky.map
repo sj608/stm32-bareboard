@@ -115,7 +115,7 @@ LOAD stm32_startup.o
  .rel.iplt      0x0000000008000240        0x0 main.o
 
 .data           0x0000000020000000        0x0 load address 0x0000000008000240
-                0x0000000040000000                start_of_data = 0x20000000
+                0x0000000020000000                start_of_data = .
  *(.data)
  .data          0x0000000020000000        0x0 main.o
  .data          0x0000000020000000        0x0 stm32_startup.o
