@@ -13,6 +13,6 @@ typedef enum
 FUNCTIONSTATUS canInit();
 FUNCTIONSTATUS canDeinit();
 FUNCTIONSTATUS receiveMsg();
-FUNCTIONSTATUS transmitMSG();
+FUNCTIONSTATUS transmitMsg();
 
 #endif
