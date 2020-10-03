@@ -208,8 +208,13 @@ void Reset_Handler(void)
     {
         *pDst = 0;
     }
+    /*
+        After each device reset, all peripheral clocks are disabled (except for the SRAM and FLITF).
+        Before using a peripheral you have to enable its clock in the RCC_AHBENR,
+        RCC_APB2ENR or RCC_APB1ENR register. 
+    */
     // call init funtion of standard libary function (only using standard libray such as scanf or string related )
     // call main()
-    // SystemInit();
+    SystemInit(); //setting SYSCLK = 72Mhz, HCLK = 72Mhz, PCLK1(APB1) = 36Mhz , PCLK2(APB2) = 72Mhz
     main();
 }

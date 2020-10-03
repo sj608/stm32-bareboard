@@ -26,7 +26,7 @@ Initialize CAN settings
     - Interrupt
 */
 
-FUNCTIONSTATUS canInit()
+ErrorStatus canInit()
 {
     uint32_t waitTimeout = 0x00000000; //counts from 0 to WAIT_TIMEOUT
     // reset CAN_MCR register = 0x0001 0002
@@ -40,11 +40,11 @@ FUNCTIONSTATUS canInit()
     {
         waitTimeout++;
     }
-    
+    waitTimeout = 0;
     if((CAN1->MSR & CAN_MSR_INAK) != CAN_MSR_INAK)
     {
         // check if acknowledged by hardware
-        return FAIL;
+        return ERROR;
     }
     else
     {
@@ -60,8 +60,6 @@ FUNCTIONSTATUS canInit()
     // Identifier filtering
     // Init mode for filter
     CAN1->FMR |= CAN_FMR_FINIT;
-    // activate banck [3:0]
-    CAN1->FA1R |= CAN_FA1R_FACT0 | CAN_FA1R_FACT1 | CAN_FA1R_FACT2 | CAN_FA1R_FACT3;
     // assign bank [3:2] to FIFO1
     CAN1->FFA1R|= CAN_FFA1R_FFA2 | CAN_FFA1R_FFA3;
     // Setting List mode
@@ -69,8 +67,65 @@ FUNCTIONSTATUS canInit()
     // Setting Single 32-bit scale config
     CAN1->FS1R|= CAN_FS1R_FSC0 | CAN_FS1R_FSC1 | CAN_FS1R_FSC2 | CAN_FS1R_FSC3;
 
-    CAN1->sFilterRegister[0]
-    // Interrupt Setting
-    // Bit timing
+    // FIFO0
+    CAN1->sFilterRegister[0].FR1 = 0X07FFFA11;
+    CAN1->sFilterRegister[0].FR2 = 0x07FF11FA;
+    CAN1->sFilterRegister[1].FR1 = 0X05FFFA11;
+    CAN1->sFilterRegister[2].FR2 = 0x05FF11FA;
+    // FIFO1
+    CAN1->sFilterRegister[3].FR1 = 0X14FFFA11;
+    CAN1->sFilterRegister[3].FR2 = 0x14FF11FA;
+    CAN1->sFilterRegister[4].FR1 = 0X10FFFA11;
+    CAN1->sFilterRegister[4].FR2 = 0x10FF11FA;
+    // activate banck [3:0]
+    CAN1->FA1R |= CAN_FA1R_FACT0 | CAN_FA1R_FACT1 | CAN_FA1R_FACT2 | CAN_FA1R_FACT3;
+    // Activate filter
+    CAN1->FMR &= ~((uint32_t)CAN_FMR_FINIT);
 
+    // ERROR Interrupt Enable: Interrupt on Change in Error status register and Last Error Code
+    // Refer to vector table inside stm32_startup.c file to interrupt handler name
+    CAN1->IER |= CAN_IER_ERRIE | CAN_IER_LECIE;
+    // FIFO1 Interrupt
+    CAN1->IER |= CAN_IER_FOVIE1 | CAN_IER_FFIE1 | CAN_IER_FMPIE1;
+    // FIFO0 Interrupt
+    CAN1->IER |= CAN_IER_FOVIE0 | CAN_IER_FFIE0 | CAN_IER_FMPIE0;
+
+    // Bit timing
+    /*
+        Refer to Page 670 of Reference manual RM008
+        Normal Operation with Loop back mode disabled
+        250KBPS = baud rate = 1 / NominalBitTime
+        NominalBitTime = 1*T_q + T_BS1 + T_BS2 = 16Tq = 4us, Tq = 250ns
+        T_BS1 = T_q * (TS1[3:0] + 1) 13Tq
+        T_BS2 = T_q * (TS2[2:0] + 1) 2 Tq
+        APB regeister must be configured to enable Clock for CAN
+        T_q = (BRP[9:0] + 1) / t_pclk (t_pclk = 32Mhz(max)) = 250ns, 1/250ns = 4MHz therefore BRP+1 should be 8, BRP = 7
+
+
+    */  
+    CAN1->BTR &= ~((uint32_t)CAN_BTR_SILM);
+    CAN1->BTR &= ~((uint32_t)CAN_BTR_LBKM);
+    // SJW = 1
+    CAN1->BTR |= CAN_BTR_SJW & 0x01000000;
+    // Segment 1 = 12
+    CAN1->BTR |= CAN_BTR_TS1 & 0x000C0000;
+    // Segment 2 = 1
+    CAN1->BTR |= CAN_BTR_TS2 & 0x00100000;
+    // BRP = 7
+    CAN1->BTR |= CAN_BTR_BRP & 0x00000007;
+
+    // Clear InitRequest to enter Normal Mode
+    CAN1->MCR &= ~((uint32_t)CAN_MCR_INRQ);
+    // INAK is 1, wait for hardware to cleare the bit
+    while(((CAN1->MSR & CAN_MSR_INAK) == CAN_MSR_INAK) && (waitTimeout != WAIT_TIMEOUT))
+    {
+        waitTimeout++;
+    }
+    if((CAN1->MSR & CAN_MSR_INAK) == CAN_MSR_INAK)
+    {   
+        // INAK is not cleared return Error
+        return ERROR;
+    }
+
+    return SUCCESS;
 }
