@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include "system_stm32f10x.h"
 #include "stm32f10x.h"
 
 #define SRAM_START 0x20000000U
