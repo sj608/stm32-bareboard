@@ -26,9 +26,14 @@ Initialize CAN settings
     - Interrupt
 */
 
-ErrorStatus canInit()
+ErrorStatus canInit(void)
 {
     uint32_t waitTimeout = 0x00000000; //counts from 0 to WAIT_TIMEOUT
+
+    RCC->APB1RSTR |= RCC_APB1RSTR_CAN1RST;
+    RCC->APB1RSTR &= ~(RCC_APB1RSTR_CAN1RST);
+    RCC->APB1ENR |= RCC_APB1ENR_CAN1EN;
+
     // reset CAN_MCR register = 0x0001 0002
     CAN1->MCR |= CAN_MCR_RESET;
     // Exit Sleep mode
@@ -127,5 +132,16 @@ ErrorStatus canInit()
         return ERROR;
     }
 
+    return SUCCESS;
+}
+
+ErrorStatus receiveMsg(void)
+{
+
+    return SUCCESS;
+}
+
+ErrorStatus transmitMsg(void)
+{
     return SUCCESS;
 }
