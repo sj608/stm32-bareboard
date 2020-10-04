@@ -59,7 +59,8 @@ ErrorStatus canInit(void)
         CAN1->MCR |= CAN_MCR_ABOM | CAN_MCR_AWUM;
         // Atomatic retransmission, Enable Receive FIFO locked mode, Transmit FIFO priorit
         CAN1->MCR &= ~((uint32_t)CAN_MCR_NART);
-        CAN1->MCR |= CAN_MCR_RFLM | CAN_MCR_TXFP;
+        CAN1->MCR &= ~((uint32_t)CAN_MCR_RFLM);
+        CAN1->MCR |= CAN_MCR_TXFP;
     }
     
     // Identifier filtering
