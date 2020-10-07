@@ -70,7 +70,7 @@ int main(void)
     canPinInit();
     if(canInit())
     {
-      //  GPIOA->BSRR |= GPIO_BSRR_BS0;
+       GPIOA->BSRR |= GPIO_BSRR_BS1;
     }
 
    //  while(1)

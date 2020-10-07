@@ -130,7 +130,7 @@ ErrorStatus canInit(void)
     if((CAN1->MSR & CAN_MSR_INAK) == CAN_MSR_INAK)
     {   
         // INAK is not cleared return Error
-         GPIOA->BSRR |= GPIO_BSRR_BS0;
+        GPIOA->BSRR |= GPIO_BSRR_BS0;
         return ERROR;
     }
 
