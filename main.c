@@ -68,12 +68,15 @@ int main(void)
     initGPIO();
     outputPinInit();
     canPinInit();
-    canInit();
-
-    while(1)
+    if(canInit())
     {
-        receivedMsg();
+      //  GPIOA->BSRR |= GPIO_BSRR_BS0;
     }
+
+   //  while(1)
+   //  {
+   //      receivedMsg();
+   //  }
 
     return 0;
 }
