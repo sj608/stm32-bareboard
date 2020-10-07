@@ -15,4 +15,4 @@ blinky.elf: main.o stm32_startup.o
 blinky.bin: blinky.elf
 	arm-none-eabi-objcopy -O binary $^ $@
 clean:
-	rm -rf *.o *.elf *.map
+	rm -rf *.o *.elf *.map *.bin

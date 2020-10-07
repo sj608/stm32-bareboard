@@ -1,9 +1,9 @@
 #include "stm32f10x.h"
-#define LEDPORT (GPIOC)
-#define LED1 (14)
-#define ENABLE_GPIO_CLOCK (RCC->APB2ENR |= RCC_APB2ENR_IOPCEN)
-#define _MODER    CRH
-#define GPIOMODER (GPIO_CRH_MODE14_0)
+#define LEDPORT (GPIOA)
+#define LED1 (0)
+#define ENABLE_GPIO_CLOCK (RCC->APB2ENR |= RCC_APB2ENR_IOPAEN)
+#define _MODER    CRL
+#define GPIOMODER (GPIO_CRL_MODE0_0)
 
 
 
@@ -21,11 +21,10 @@ void ms_delay(int ms)
 int main(void)
 {
     ENABLE_GPIO_CLOCK;              // enable the clock to GPIO
-    LEDPORT->CRH &= ~(GPIO_CRH_CNF14);
     LEDPORT->_MODER |= GPIOMODER;   // set pins to be general purpose output
     for (;;) 
     {
-    ms_delay(3000);
+    ms_delay(2000);
     LEDPORT->ODR ^= (1<<LED1);  // toggle diodes
     }
 
