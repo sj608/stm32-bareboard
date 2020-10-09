@@ -39,7 +39,7 @@ ErrorStatus inputPinInit()
 ErrorStatus outputPinInit()
 {   
     GPIOA->CRL |= GPIO_CRL_MODE0 | GPIO_CRL_MODE1 | GPIO_CRL_MODE2 | GPIO_CRL_MODE3;
-    GPIOA->CRL &=  ~(GPIO_CRL_CNF0) & ~(GPIO_CRL_CNF1) & ~(GPIO_CRL_CNF2) & ~(GPIO_CRL_CNF3);
+    GPIOA->CRL &=  ~(GPIO_CRL_CNF0 |GPIO_CRL_CNF2 | GPIO_CRL_CNF1 | GPIO_CRL_CNF3);
     GPIOA->BRR &= 0;
     return SUCCESS;
 }
