@@ -71,12 +71,18 @@ int main(void)
     if(canInit())
     {
        GPIOA->BSRR |= GPIO_BSRR_BS1;
+       GPIOA->BSRR |= GPIO_BSRR_BR0;
     }
+    else
+    {
+        GPIOA->BSRR |= GPIO_BSRR_BR0;
+    }
+    
 
-   //  while(1)
-   //  {
-   //      receivedMsg();
-   //  }
+    // while(1)
+    // {
+    //     receivedMsg();
+    // }
 
     return 0;
 }
@@ -124,7 +130,7 @@ void receivedMsg(void)
         
         case 0X07FF11FA:
             GPIOA->BSRR &= ~(GPIO_BSRR_BS0);
-            GPIOA->BSRR |= GPIO_BSRR_BS0;
+            GPIOA->BSRR |= GPIO_BSRR_BR0;
             break;
 
         case 0X05FFFA11:
@@ -133,7 +139,7 @@ void receivedMsg(void)
 
         case 0X05FF11FA:
             GPIOA->BSRR &= ~(GPIO_BSRR_BS1);
-            GPIOA->BSRR |= GPIO_BSRR_BS1;
+            GPIOA->BSRR |= GPIO_BSRR_BR1;
             break;
         }
     }

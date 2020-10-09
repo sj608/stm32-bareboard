@@ -1,7 +1,7 @@
 #include "stm32f10x.h"
 #include "stm32_can.h"
 
-#define WAIT_TIMEOUT 0xFFFF
+#define WAIT_TIMEOUT 0xFFFFF
 
 
 /* 
@@ -126,11 +126,11 @@ ErrorStatus canInit(void)
     while(((CAN1->MSR & CAN_MSR_INAK) == CAN_MSR_INAK) && (waitTimeout != WAIT_TIMEOUT))
     {
         waitTimeout++;
+        GPIOA->BSRR |= GPIO_BSRR_BS0;
     }
     if((CAN1->MSR & CAN_MSR_INAK) == CAN_MSR_INAK)
     {   
         // INAK is not cleared return Error
-        GPIOA->BSRR |= GPIO_BSRR_BS0;
         return ERROR;
     }
 

@@ -39,7 +39,7 @@ ErrorStatus inputPinInit()
 ErrorStatus outputPinInit()
 {   
     GPIOA->CRL |= GPIO_CRL_MODE0 | GPIO_CRL_MODE1 | GPIO_CRL_MODE2 | GPIO_CRL_MODE3;
-    GPIOA->CRL &=  ~(GPIO_CRL_CNF0 |GPIO_CRL_CNF2 | GPIO_CRL_CNF1 | GPIO_CRL_CNF3);
+    GPIOA->CRL &=  ~(GPIO_CRL_CNF0) & ~(GPIO_CRL_CNF1) & ~(GPIO_CRL_CNF2) & ~(GPIO_CRL_CNF3);
     GPIOA->BRR &= 0;
     return SUCCESS;
 }
@@ -52,12 +52,13 @@ ErrorStatus canPinInit()
         CAN_RX Input floating / input pull-up
         PA12 = Physical pin 33 = TX, PA11 = Physical pin 32= RX 
     */
-    AFIO->MAPR |= ~(AFIO_MAPR_CAN_REMAP);
-    // Tx pin setup: output
-    GPIOA->CRH |= GPIO_CRH_MODE11;
-    GPIOA->CRH |= GPIO_CRH_CNF11 & ~(GPIO_CRH_CNF11_0);
+    AFIO->MAPR &= ~(AFIO_MAPR_CAN_REMAP);
     // Rx pin setup: Input
-    GPIOA->CRH &= ~(GPIO_CRH_MODE12);
+    GPIOA->CRH &= ~(GPIO_CRH_MODE11);
+    GPIOA->CRH |= GPIO_CRH_CNF11 & ~(GPIO_CRH_CNF11_1);
+    // Tx pin setup: Output
+    GPIOA->CRH |= GPIO_CRH_MODE12;
+    GPIOA->CRH &= ~(GPIO_CRH_CNF12);
     
     return SUCCESS;
 }
