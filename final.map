@@ -1,0 +1,187 @@
+
+Allocating common symbols
+Common symbol       size              file
+
+canRx1Msg           0x34              main.o
+canRx0Msg           0x34              main.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+FLASH            0x0000000008000000 0x0000000000010000 xr
+SRAM             0x0000000020000000 0x0000000000005000 xrw
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+LOAD main.o
+LOAD stm32_startup.o
+LOAD stm32_gpio.o
+LOAD stm32_can.o
+LOAD system_stm32f10x.o
+
+.text           0x0000000008000000      0xa30
+ *(.isr_vector)
+ .isr_vector    0x0000000008000000      0x130 stm32_startup.o
+                0x0000000008000000                vectors
+ *(.text)
+ .text          0x0000000008000130      0x304 main.o
+                0x0000000008000130                USB_LP_CAN_RX0_IRQHandler
+                0x0000000008000238                CAN_RX1_IRQHandler
+                0x0000000008000244                CAN_SCE_IRQHandler
+                0x0000000008000250                main
+                0x000000000800029c                receivedMsg
+ .text          0x0000000008000434       0x88 stm32_startup.o
+                0x0000000008000434                RTC_Alarm_IRQHandler
+                0x0000000008000434                EXTI2_IRQHandler
+                0x0000000008000434                TIM8_TRG_COM_IRQHandler
+                0x0000000008000434                TIM8_CC_IRQHandler
+                0x0000000008000434                DebugMon_Handler
+                0x0000000008000434                TIM1_CC_IRQHandler
+                0x0000000008000434                HardFault_Handler
+                0x0000000008000434                TIM6_IRQHandler
+                0x0000000008000434                SysTick_Handler
+                0x0000000008000434                PVD_IRQHandler
+                0x0000000008000434                SDIO_IRQHandler
+                0x0000000008000434                TAMP_STAMP_IRQHandler
+                0x0000000008000434                PendSV_Handler
+                0x0000000008000434                NMI_Handler
+                0x0000000008000434                EXTI3_IRQHandler
+                0x0000000008000434                USB_HP_CAN_TX_IRQHandler
+                0x0000000008000434                EXTI0_IRQHandler
+                0x0000000008000434                I2C2_EV_IRQHandler
+                0x0000000008000434                UsageFault_Handler
+                0x0000000008000434                SPI1_IRQHandler
+                0x0000000008000434                TIM8_UP_IRQHandler
+                0x0000000008000434                defaultHandler
+                0x0000000008000434                DMA2_Channel2_IRQHandler
+                0x0000000008000434                DMA1_Channel4_IRQHandler
+                0x0000000008000434                USART3_IRQHandler
+                0x0000000008000434                DMA1_Channel7_IRQHandler
+                0x0000000008000434                UART5_IRQHandler
+                0x0000000008000434                ADC3_IRQHandler
+                0x0000000008000434                TIM4_IRQHandler
+                0x0000000008000434                DMA2_Channel1_IRQHandler
+                0x0000000008000434                USB_Wakeup_IRQHandler
+                0x0000000008000434                I2C1_EV_IRQHandler
+                0x0000000008000434                DMA1_Channel6_IRQHandler
+                0x0000000008000434                UART4_IRQHandler
+                0x0000000008000434                TIM3_IRQHandler
+                0x0000000008000434                RCC_IRQHandler
+                0x0000000008000434                TIM1_TRG_COM_IRQHandler
+                0x0000000008000434                DMA1_Channel1_IRQHandler
+                0x0000000008000434                EXTI15_10_IRQHandler
+                0x0000000008000434                ADC_IRQHandler
+                0x0000000008000434                TIM7_IRQHandler
+                0x0000000008000434                TIM5_IRQHandler
+                0x0000000008000434                EXTI9_5_IRQHandler
+                0x0000000008000434                RTC_WKUP_IRQHandler
+                0x0000000008000434                SPI2_IRQHandler
+                0x0000000008000434                MemManage_Handler
+                0x0000000008000434                SVC_Handler
+                0x0000000008000434                DMA1_Channel5_IRQHandler
+                0x0000000008000434                EXTI4_IRQHandler
+                0x0000000008000434                DMA1_Channel3_IRQHandler
+                0x0000000008000434                FSMC_IRQHandler
+                0x0000000008000434                TIM1_UP_IRQHandler
+                0x0000000008000434                WWDG_IRQHandler
+                0x0000000008000434                TIM2_IRQHandler
+                0x0000000008000434                TIM1_BRK_IRQHandler
+                0x0000000008000434                EXTI1_IRQHandler
+                0x0000000008000434                DMA2_Channel4_5_IRQHandler
+                0x0000000008000434                USART2_IRQHandler
+                0x0000000008000434                I2C2_ER_IRQHandler
+                0x0000000008000434                DMA1_Channel2_IRQHandler
+                0x0000000008000434                TIM8_BRK_IRQHandler
+                0x0000000008000434                BusFault_Handler
+                0x0000000008000434                USART1_IRQHandler
+                0x0000000008000434                SPI3_IRQHandler
+                0x0000000008000434                I2C1_ER_IRQHandler
+                0x0000000008000434                DMA2_Channel3_IRQHandler
+                0x000000000800043a                Reset_Handler
+ .text          0x00000000080004bc       0xc0 stm32_gpio.o
+                0x00000000080004bc                initGPIO
+                0x00000000080004dc                inputPinInit
+                0x00000000080004ea                outputPinInit
+                0x0000000008000528                canPinInit
+ .text          0x000000000800057c      0x268 stm32_can.o
+                0x000000000800057c                canInit
+                0x00000000080007c8                receiveMsg
+                0x00000000080007d6                transmitMsg
+ .text          0x00000000080007e4      0x24c system_stm32f10x.o
+                0x00000000080007e4                SystemInit
+                0x000000000800084c                SystemCoreClockUpdate
+ *(.rodata)
+                0x0000000008000a30                . = ALIGN (0x4)
+                0x0000000008000a30                end_of_text = .
+
+.glue_7         0x0000000008000a30        0x0
+ .glue_7        0x0000000008000a30        0x0 linker stubs
+
+.glue_7t        0x0000000008000a30        0x0
+ .glue_7t       0x0000000008000a30        0x0 linker stubs
+
+.vfp11_veneer   0x0000000008000a30        0x0
+ .vfp11_veneer  0x0000000008000a30        0x0 linker stubs
+
+.v4_bx          0x0000000008000a30        0x0
+ .v4_bx         0x0000000008000a30        0x0 linker stubs
+
+.iplt           0x0000000008000a30        0x0
+ .iplt          0x0000000008000a30        0x0 main.o
+
+.rel.dyn        0x0000000008000a30        0x0
+ .rel.iplt      0x0000000008000a30        0x0 main.o
+
+.data           0x0000000020000000       0x14 load address 0x0000000008000a30
+                0x0000000020000000                start_of_data = .
+ *(.data)
+ .data          0x0000000020000000        0x0 main.o
+ .data          0x0000000020000000        0x0 stm32_startup.o
+ .data          0x0000000020000000        0x0 stm32_gpio.o
+ .data          0x0000000020000000        0x0 stm32_can.o
+ .data          0x0000000020000000       0x14 system_stm32f10x.o
+                0x0000000020000000                SystemCoreClock
+                0x0000000020000004                AHBPrescTable
+                0x0000000020000014                . = ALIGN (0x4)
+                0x0000000020000014                end_of_data = .
+
+.igot.plt       0x0000000020000014        0x0 load address 0x0000000008000a44
+ .igot.plt      0x0000000020000014        0x0 main.o
+
+.bss            0x0000000020000014       0x68 load address 0x0000000008000a44
+                0x0000000020000014                start_of_bss = .
+ *(.bss)
+ .bss           0x0000000020000014        0x0 main.o
+ .bss           0x0000000020000014        0x0 stm32_startup.o
+ .bss           0x0000000020000014        0x0 stm32_gpio.o
+ .bss           0x0000000020000014        0x0 stm32_can.o
+ .bss           0x0000000020000014        0x0 system_stm32f10x.o
+ *(COMMON)
+ COMMON         0x0000000020000014       0x68 main.o
+                0x0000000020000014                canRx1Msg
+                0x0000000020000048                canRx0Msg
+                0x000000002000007c                . = ALIGN (0x4)
+                0x000000002000007c                end_of_bss = .
+OUTPUT(final.elf elf32-littlearm)
+
+.comment        0x0000000000000000       0x31
+ .comment       0x0000000000000000       0x31 main.o
+                                         0x32 (size before relaxing)
+ .comment       0x0000000000000031       0x32 stm32_startup.o
+ .comment       0x0000000000000031       0x32 stm32_gpio.o
+ .comment       0x0000000000000031       0x32 stm32_can.o
+ .comment       0x0000000000000031       0x32 system_stm32f10x.o
+
+.ARM.attributes
+                0x0000000000000000       0x33
+ .ARM.attributes
+                0x0000000000000000       0x33 main.o
+ .ARM.attributes
+                0x0000000000000033       0x33 stm32_startup.o
+ .ARM.attributes
+                0x0000000000000066       0x33 stm32_gpio.o
+ .ARM.attributes
+                0x0000000000000099       0x33 stm32_can.o
+ .ARM.attributes
+                0x00000000000000cc       0x33 system_stm32f10x.o
