@@ -126,7 +126,7 @@ ErrorStatus canInit(void)
     while(((CAN1->MSR & CAN_MSR_INAK) == CAN_MSR_INAK) && (waitTimeout != WAIT_TIMEOUT))
     {
         waitTimeout++;
-        GPIOA->BSRR |= GPIO_BSRR_BS0;
+        // GPIOA->BSRR |= GPIO_BSRR_BS0;
     }
     if((CAN1->MSR & CAN_MSR_INAK) == CAN_MSR_INAK)
     {   

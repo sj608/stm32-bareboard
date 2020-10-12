@@ -70,12 +70,12 @@ int main(void)
     canPinInit();
     if(canInit())
     {
-       GPIOA->BSRR |= GPIO_BSRR_BS1;
        GPIOA->BSRR |= GPIO_BSRR_BR0;
+       GPIOA->BSRR |= GPIO_BSRR_BS1;
     }
     else
     {
-        GPIOA->BSRR |= GPIO_BSRR_BR0;
+        // GPIOA->BSRR |= GPIO_BSRR_BS0;
     }
     
 

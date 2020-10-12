@@ -58,6 +58,7 @@ ErrorStatus canPinInit()
     GPIOA->CRH |= GPIO_CRH_CNF11 & ~(GPIO_CRH_CNF11_1);
     // Tx pin setup: Output
     GPIOA->CRH |= GPIO_CRH_MODE12;
+
     GPIOA->CRH |= GPIO_CRH_CNF12 & ~(GPIO_CRH_CNF12_0);
     
     return SUCCESS;
