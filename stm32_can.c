@@ -32,6 +32,7 @@ ErrorStatus canInit(void)
 
     RCC->APB1RSTR |= RCC_APB1RSTR_CAN1RST;
     RCC->APB1RSTR &= ~(RCC_APB1RSTR_CAN1RST);
+    RCC->APB1ENR &= ~(RCC_APB1ENR_USBEN);
     RCC->APB1ENR |= RCC_APB1ENR_CAN1EN;
 
     // reset CAN_MCR register = 0x0001 0002
@@ -66,35 +67,37 @@ ErrorStatus canInit(void)
     // Identifier filtering
     // Init mode for filter
     CAN1->FMR |= CAN_FMR_FINIT;
-    // assign bank [3:2] to FIFO1
-    CAN1->FFA1R|= CAN_FFA1R_FFA2 | CAN_FFA1R_FFA3;
+    // activate banck [3:0]
+    CAN1->FA1R &= ~(CAN_FA1R_FACT0) & ~(CAN_FA1R_FACT1) & ~(CAN_FA1R_FACT2) & ~(CAN_FA1R_FACT3);
     // Setting List mode
-    CAN1->FM1R|= CAN_FM1R_FBM0 | CAN_FM1R_FBM1 | CAN_FM1R_FBM2 | CAN_FM1R_FBM3;
+    CAN1->FM1R&= ~CAN_FM1R_FBM0 & ~CAN_FM1R_FBM1 & ~CAN_FM1R_FBM2 & ~CAN_FM1R_FBM3;
     // Setting Single 32-bit scale config
     CAN1->FS1R|= CAN_FS1R_FSC0 | CAN_FS1R_FSC1 | CAN_FS1R_FSC2 | CAN_FS1R_FSC3;
+    // assign bank [3:2] to FIFO1
+    CAN1->FFA1R|= CAN_FFA1R_FFA2 | CAN_FFA1R_FFA3;
 
     // FIFO0
-    CAN1->sFilterRegister[0].FR1 = 0X07FFFA11;
-    CAN1->sFilterRegister[0].FR2 = 0x07FF11FA;
-    CAN1->sFilterRegister[1].FR1 = 0X05FFFA11;
-    CAN1->sFilterRegister[2].FR2 = 0x05FF11FA;
+    CAN1->sFilterRegister[0].FR1 = 0X00111111;
+    CAN1->sFilterRegister[0].FR2 = 0x00FFFFFF;
+    CAN1->sFilterRegister[1].FR1 = 0X00111111;
+    CAN1->sFilterRegister[1].FR2 = 0x00FFFFFF;
     // FIFO1
-    CAN1->sFilterRegister[3].FR1 = 0X14FFFA11;
-    CAN1->sFilterRegister[3].FR2 = 0x14FF11FA;
-    CAN1->sFilterRegister[4].FR1 = 0X10FFFA11;
-    CAN1->sFilterRegister[4].FR2 = 0x10FF11FA;
+    CAN1->sFilterRegister[2].FR1 = 0X14FFFA11;
+    CAN1->sFilterRegister[2].FR2 = 0x14FF11FA;
+    CAN1->sFilterRegister[3].FR1 = 0X10FFFA11;
+    CAN1->sFilterRegister[3].FR2 = 0x10FF11FA;
     // activate banck [3:0]
     CAN1->FA1R |= CAN_FA1R_FACT0 | CAN_FA1R_FACT1 | CAN_FA1R_FACT2 | CAN_FA1R_FACT3;
     // Activate filter
-    CAN1->FMR &= ~((uint32_t)CAN_FMR_FINIT);
+    CAN1->FMR &= ~(CAN_FMR_FINIT);
 
     // ERROR Interrupt Enable: Interrupt on Change in Error status register and Last Error Code
     // Refer to vector table inside stm32_startup.c file to interrupt handler name
-    CAN1->IER |= CAN_IER_ERRIE | CAN_IER_LECIE;
-    // FIFO1 Interrupt
-    CAN1->IER |= CAN_IER_FOVIE1 | CAN_IER_FFIE1 | CAN_IER_FMPIE1;
-    // FIFO0 Interrupt
-    CAN1->IER |= CAN_IER_FOVIE0 | CAN_IER_FFIE0 | CAN_IER_FMPIE0;
+    // CAN1->IER |= CAN_IER_ERRIE | CAN_IER_LECIE;
+    // // FIFO1 Interrupt
+    // CAN1->IER |= CAN_IER_FOVIE1 | CAN_IER_FFIE1 | CAN_IER_FMPIE1;
+    // // FIFO0 Interrupt
+    // CAN1->IER |= CAN_IER_FOVIE0 | CAN_IER_FFIE0 | CAN_IER_FMPIE0;
 
     // Bit timing
     /*
@@ -112,7 +115,7 @@ ErrorStatus canInit(void)
     CAN1->BTR &= ~((uint32_t)CAN_BTR_SILM);
     CAN1->BTR &= ~((uint32_t)CAN_BTR_LBKM);
     // SJW = 1
-    CAN1->BTR |= CAN_BTR_SJW & 0x01000000;
+    CAN1->BTR |= CAN_BTR_SJW & 0x00000000;
     // Segment 1 = 12
     CAN1->BTR |= CAN_BTR_TS1 & 0x000C0000;
     // Segment 2 = 1
@@ -133,6 +136,7 @@ ErrorStatus canInit(void)
         // INAK is not cleared return Error
         return ERROR;
     }
+    CAN1->MCR &= ~CAN_MCR_SLEEP;
 
     return SUCCESS;
 }

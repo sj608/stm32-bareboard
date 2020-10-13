@@ -31,6 +31,8 @@ void USB_LP_CAN_RX0_IRQHandler(void)
     uint16_t waitTime = 0x0000;
     uint8_t  messageCnt = 0;
 
+    GPIOA->BSRR|=GPIO_BSRR_BS0;
+    
     canRx0Msg.rxMsgFOV = CAN1->RF0R & CAN_RF0R_FOVR0 ? 1 : 0;
     CAN1->RF0R |= CAN1->RF0R & CAN_RF0R_FOVR0 ? CAN_RF0R_FOVR0 : 0;
     canRx0Msg.rxMsgFUL = CAN1->RF0R & CAN_RF0R_FULL0 ? 1 : 0;
@@ -64,25 +66,38 @@ void CAN_SCE_IRQHandler(void)
 void receivedMsg(void);
 
 int main(void)
-{
+{   
+    // NVIC_SetPriority(USB_LP_CAN1_RX0_IRQn,0);
+    // NVIC_EnableIRQ(USB_LP_CAN1_RX0_IRQn);
     initGPIO();
     outputPinInit();
     canPinInit();
     if(canInit())
     {
-       GPIOA->BSRR |= GPIO_BSRR_BR0;
        GPIOA->BSRR |= GPIO_BSRR_BS1;
     }
     else
     {
-        // GPIOA->BSRR |= GPIO_BSRR_BS0;
+        GPIOA->BSRR |= GPIO_BSRR_BS0;
     }
     
 
-    // while(1)
-    // {
-    //     receivedMsg();
-    // }
+    while(1)
+    {
+        // receivedMsg();
+        if(CAN1->RF0R & CAN_RF0R_FMP0)
+        {
+            GPIOA->BSRR |= GPIO_BSRR_BS0;
+            GPIOA->BSRR &= ~GPIO_BSRR_BS1;
+            GPIOA->BSRR |= GPIO_BSRR_BR1;
+        }
+        else
+        {
+            GPIOA->BSRR &= ~GPIO_BSRR_BS0 & ~GPIO_BSRR_BS1;
+            GPIOA->BSRR |= GPIO_BSRR_BS1;
+            GPIOA->BSRR |= GPIO_BSRR_BS0;
+        }
+    }
 
     return 0;
 }
