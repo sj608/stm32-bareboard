@@ -88,15 +88,15 @@ int main(void)
         if(CAN1->RF0R & CAN_RF0R_FMP0)
         {
             GPIOA->BSRR |= GPIO_BSRR_BS0;
-            GPIOA->BSRR &= ~GPIO_BSRR_BS1;
-            GPIOA->BSRR |= GPIO_BSRR_BR1;
         }
         else
         {
-            GPIOA->BSRR &= ~GPIO_BSRR_BS0 & ~GPIO_BSRR_BS1;
-            GPIOA->BSRR |= GPIO_BSRR_BS1;
-            GPIOA->BSRR |= GPIO_BSRR_BS0;
+
         }
+        // if(CAN1->ESR)
+        // {
+        //     GPIOA->BSRR |= GPIO_BSRR_BS0;
+        // }
     }
 
     return 0;

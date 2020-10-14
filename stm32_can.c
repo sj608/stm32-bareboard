@@ -121,7 +121,7 @@ ErrorStatus canInit(void)
     // Segment 2 = 1
     CAN1->BTR |= CAN_BTR_TS2 & 0x00100000;
     // BRP = 7
-    CAN1->BTR |= CAN_BTR_BRP & 0x00000007;
+    CAN1->BTR |= CAN_BTR_BRP & 0x00000008;
 
     // Clear InitRequest to enter Normal Mode
     CAN1->MCR &= ~((uint32_t)CAN_MCR_INRQ);
