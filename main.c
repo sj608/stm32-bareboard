@@ -65,6 +65,16 @@ void CAN_SCE_IRQHandler(void)
 
 void receivedMsg(void);
 
+void ms_delay(int ms)
+{
+   while (ms-- > 0) {
+      volatile int x=500;
+      while (x-- > 0)
+         __asm("nop");
+   }
+}
+
+
 int main(void)
 {   
     // NVIC_SetPriority(USB_LP_CAN1_RX0_IRQn,0);
@@ -75,28 +85,52 @@ int main(void)
     if(canInit())
     {
        GPIOA->BSRR |= GPIO_BSRR_BS1;
+       GPIOA->BSRR |= GPIO_BSRR_BS0;
+        while(1)
+        {
+            // receivedMsg();
+            if(transmitMsg())
+            {
+                // on transmit blink red led twice
+                GPIOA->BSRR |= GPIO_BSRR_BR1;
+                GPIOA->BSRR |= GPIO_BSRR_BS0;
+                ms_delay(1000);
+                GPIOA->BSRR |= GPIO_BSRR_BR0;
+                ms_delay(1000);
+                GPIOA->BSRR |= GPIO_BSRR_BS0;
+                ms_delay(1000);
+                GPIOA->BSRR |= GPIO_BSRR_BR0;
+            }
+            else
+            {
+                GPIOA->BSRR |= GPIO_BSRR_BR0;
+            }
+            if(CAN1->RF0R & CAN_RF0R_FMP0)
+            {
+                GPIOA->BSRR |= GPIO_BSRR_BR0;
+                GPIOA->BSRR |= GPIO_BSRR_BS1;
+                ms_delay(1000);
+                GPIOA->BSRR |= GPIO_BSRR_BR1;
+                ms_delay(1000);
+                GPIOA->BSRR |= GPIO_BSRR_BS1;
+                ms_delay(1000);
+                GPIOA->BSRR |= GPIO_BSRR_BR1;
+            }
+            else
+            {
+                GPIOA->BSRR |= GPIO_BSRR_BR1;
+            }
+            // if(CAN1->ESR)
+            // {
+            //     GPIOA->BSRR |= GPIO_BSRR_BS0;
+            // }
+        }
     }
     else
     {
-        GPIOA->BSRR |= GPIO_BSRR_BS0;
-    }
-    
+        GPIOA->BSRR |= GPIO_BSRR_BR0;
+        GPIOA->BSRR |= GPIO_BSRR_BR1;
 
-    while(1)
-    {
-        // receivedMsg();
-        if(CAN1->RF0R & CAN_RF0R_FMP0)
-        {
-            GPIOA->BSRR |= GPIO_BSRR_BS0;
-        }
-        else
-        {
-
-        }
-        // if(CAN1->ESR)
-        // {
-        //     GPIOA->BSRR |= GPIO_BSRR_BS0;
-        // }
     }
 
     return 0;

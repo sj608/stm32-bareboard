@@ -77,10 +77,10 @@ ErrorStatus canInit(void)
     CAN1->FFA1R|= CAN_FFA1R_FFA2 | CAN_FFA1R_FFA3;
 
     // FIFO0
-    CAN1->sFilterRegister[0].FR1 = 0X00111111;
-    CAN1->sFilterRegister[0].FR2 = 0x00FFFFFF;
-    CAN1->sFilterRegister[1].FR1 = 0X00111111;
-    CAN1->sFilterRegister[1].FR2 = 0x00FFFFFF;
+    CAN1->sFilterRegister[0].FR1 = 0X11111104;
+    CAN1->sFilterRegister[0].FR2 = 0xFFFFFFFF;
+    CAN1->sFilterRegister[1].FR1 = 0X11111104;
+    CAN1->sFilterRegister[1].FR2 = 0xFFFFFFFF;
     // FIFO1
     CAN1->sFilterRegister[2].FR1 = 0X14FFFA11;
     CAN1->sFilterRegister[2].FR2 = 0x14FF11FA;
@@ -113,7 +113,7 @@ ErrorStatus canInit(void)
 
     */  
     CAN1->BTR &= ~((uint32_t)CAN_BTR_SILM);
-    CAN1->BTR &= ~((uint32_t)CAN_BTR_LBKM);
+    CAN1->BTR |= (CAN_BTR_LBKM);
     // SJW = 1
     CAN1->BTR |= CAN_BTR_SJW & 0x00000000;
     // Segment 1 = 12
@@ -147,7 +147,31 @@ ErrorStatus receiveMsg(void)
     return SUCCESS;
 }
 
+/* 
+    Message Tranmission
+    CAN_TSR - Transmit status register
+    CAN_TIxR - Tx message Identifier
+*/
 ErrorStatus transmitMsg(void)
 {
+    uint32_t msgID = 0x11111100;
+    uint32_t dataLow = 0x11223344;
+    uint32_t dataHigh = 0x55667788;
+    uint8_t dataDLC = 0x08;
+
+    if(!(CAN1->TSR & (CAN_TSR_TME0 | CAN_TSR_TME1 | CAN_TSR_TME2)))
+    {
+        return ERROR;
+    }
+
+    // Free tx mail box or lowest priority mailbox
+    uint8_t mailboxID = (CAN1->TSR & CAN_TSR_CODE) >> 24;
+    CAN1->sTxMailBox[mailboxID].TIR = (msgID | CAN_TI0R_IDE) & ~(CAN_TI0R_RTR) & ~(CAN_TI0R_TXRQ);
+    CAN1->sTxMailBox[mailboxID].TDTR = dataDLC & CAN_TDT0R_DLC;
+    CAN1->sTxMailBox[mailboxID].TDLR = dataLow;
+    CAN1->sTxMailBox[mailboxID].TDHR = dataHigh;
+
+    CAN1->sTxMailBox[mailboxID].TIR |= CAN_TI0R_TXRQ;
+
     return SUCCESS;
 }
